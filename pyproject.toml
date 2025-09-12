@@ -1,0 +1,13 @@
+[project]
+name = "rct-inverter-dashboard"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = [
+    "openpyxl>=3.1.5",
+    "pandas>=2.3.2",
+    "pyyaml>=6.0.2",
+    "rctclient>=0.0.3",
+    "streamlit>=1.49.1",
+    "rich>=13.7.1",
+    "streamlit-autorefresh>=1.0.1",
+]
