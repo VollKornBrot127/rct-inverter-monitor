@@ -1,0 +1,32 @@
+##################################################################################################################################
+# Copyright (c) 2025                                                                                          All Rights Reserved
+##################################################################################################################################
+# CREATION DATE:  26.08.2025
+# FILE:           oid_mapping.yml
+# DESCRIPTION:    Mapping file for Object IDs (OIDs) to their human-readable names.
+##################################################################################################################################
+
+# DEVICE #########################################################################################################################
+DEVICE_NAME: android_description # Name of the RCT server device.
+INVERTER_STATUS: prim_sm.state # Status of the inverter.
+
+# SOLAR GENERATORS ###############################################################################################################
+SOLAR_GENERATOR_A_VOLTAGE: g_sync.u_sg_avg[0] # Voltage of Solar Generator A.
+SOLAR_GENERATOR_A_POWER: dc_conv.dc_conv_struct[0].p_dc_lp # Power output of Solar Generator A.
+SOLAR_GENERATOR_B_VOLTAGE: g_sync.u_sg_avg[1] # Voltage of Solar Generator B.
+SOLAR_GENERATOR_B_POWER: dc_conv.dc_conv_struct[1].p_dc_lp # Power output of Solar Generator B.
+
+# BATTERY ########################################################################################################################
+BATTERY_VOLTAGE: power_mng.u_acc_mix_lp # Voltage of the battery.
+BATTERY_SOC: battery.soc # State of Charge (SoC) of the battery.
+BATTERY_TARGET_SOC: battery.soc_target # Target State of Charge (SoC) for the battery.
+BATTERY_POWER: g_sync.p_acc_lp # Power being drawn from or supplied to the battery.
+BATTERY_CURRENT: battery.current
+BATTERY_SOH: battery.soh # State of Health (SoH) of the battery.
+
+# HOUSEHOLD ######################################################################################################################
+HOUSEHOLD_LOAD_INTERNAL: g_sync.p_ac_load_sum_lp # Net PV/battery power consumption of the household.
+
+# GRID ###########################################################################################################################
+TOTAL_GRID_POWER: g_sync.p_ac_grid_sum_lp # Total power being drawn from or supplied to the grid.
+GRID_FEED_YEAR_SUM: energy.e_grid_feed_year
