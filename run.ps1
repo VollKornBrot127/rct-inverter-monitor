@@ -1,1 +1,1 @@
-uv run streamlit run .\App\dashboard.py
+uv run streamlit run .\src\dashboard.py
