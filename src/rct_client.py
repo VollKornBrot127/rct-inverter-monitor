@@ -80,7 +80,11 @@ class RctClient:
         self.host_ip:               str                             = host_ip
         self.port:                  int                             = port
         self.connection_timeout:    float                           = connection_timeout
-        self.oid_mapping:           dict[str, str]                  = read_yaml(file_path="App/oid_mapping.yml")
+        self.oid_mapping:           dict[str, str]                  = yaml.load(
+                                                                        Path(__file__).parent.joinpath("oid_mapping.yml")
+                                                                        .read_text(encoding="utf-8"),
+                                                                        Loader=yaml.SafeLoader
+                                                                    )
         self.reverse_oid_mapping:   dict[str, str]                  = {value: key for key, value in self.oid_mapping.items()}
         self.recv_chunk_size:       int                             = 256
         self.cache:                 dict[str, tuple[Any, float]]    = {}
@@ -360,7 +364,7 @@ class RctClient:
             retries (int, optional): Number of retries if the request fails. Defaults to 1.
         """
         if key not in self.oid_mapping:
-            raise KeyError(f"[ERROR] OID key not found: '{key}'")
+            raise KeyError(f"OID key not found: '{key}'")
 
         if not self._socket:
             raise TypeError(f"[ERROR] Expected socket.socket, found: {type(self._socket)}")

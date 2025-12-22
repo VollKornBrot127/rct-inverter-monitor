@@ -26,13 +26,13 @@ from rct_client import RctClient
 # MARK: GLOBAL VARIABLES                                                                                                               #
 ##################################################################################################################################
 LOGGER: logging.Logger = logging.getLogger(__name__)
-DASHBOARD_REFRESH_INTERVAL_MS: int = 1000
+DASHBOARD_REFRESH_INTERVAL_MS: int = 5000
 
 
 ##################################################################################################################################
 # FUNCTION IMPLEMENTATION                                                                                                        #
 ##################################################################################################################################
-def widget_battery_soc():
+def widget_battery_soc(cache: dict[str, tuple[Any, float]]):
     st.header("Battery 🔋")
 
     # Battery SoC variables
@@ -89,7 +89,7 @@ def widget_battery_soc():
         st.markdown(f"Min Battery SoC: `{min(st.session_state['battery_soc_values'])} %`")
 
 
-def widget_household_load():
+def widget_household_load(cache: dict[str, tuple[Any, float]]):
     st.header("Household Load 🏠")
     internal_household_load_power_kw: float | None = None
     timestamp_internal_household_load_power: str | None = None
@@ -120,7 +120,7 @@ def widget_household_load():
         )
 
 
-def widget_solar_generators():
+def widget_solar_generators(cache: dict[str, tuple[Any, float]]):
     st.header("Solar Generators 🔆")
     solar_gen_power: float | None = None
     timestamp_solar_gen_power: str | None = None
@@ -187,10 +187,10 @@ if __name__ == "__main__":
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        widget_battery_soc()
+        widget_battery_soc(cache=cache)
 
     with col2:
-        widget_household_load()
+        widget_household_load(cache=cache)
 
     with col3:
-        widget_solar_generators()
+        widget_solar_generators(cache=cache)
