@@ -30,7 +30,7 @@ DASHBOARD_REFRESH_INTERVAL_MS: int = 5000
 
 
 ##################################################################################################################################
-# FUNCTION IMPLEMENTATION                                                                                                        #
+# MARK: FUNCTION IMPLEMENTATION                                                                                                  #
 ##################################################################################################################################
 def widget_battery_soc(cache: dict[str, tuple[Any, float]]):
     st.header("Battery 🔋")
@@ -42,7 +42,6 @@ def widget_battery_soc(cache: dict[str, tuple[Any, float]]):
 
     # Battery power variables
     battery_power: float | None = None
-    timestamp_battery_power: str | None = None
     battery_power_raw: tuple[Any, float] | None = cache.get("BATTERY_POWER", None)
 
     # Get battery SoC and timestamp
@@ -53,7 +52,6 @@ def widget_battery_soc(cache: dict[str, tuple[Any, float]]):
     # Get battery power and timestamp
     if battery_power_raw:
         battery_power = round(battery_power_raw[0] / 1000, 2)
-        timestamp_battery_power = datetime.fromtimestamp(battery_power_raw[1]).strftime("%H:%M:%S")
 
     if "initial_battery_soc" not in st.session_state and battery_soc is not None:
         st.session_state["initial_battery_soc"] = battery_soc
@@ -84,9 +82,9 @@ def widget_battery_soc(cache: dict[str, tuple[Any, float]]):
             border=True,
         )
         if timestamp_battery_soc:
-            st.markdown(f"Last updated: `{timestamp_battery_soc}`")
-        st.markdown(f"Max Battery SoC: `{max(st.session_state['battery_soc_values'])} %`")
-        st.markdown(f"Min Battery SoC: `{min(st.session_state['battery_soc_values'])} %`")
+            st.markdown(f"Last Update: **{timestamp_battery_soc}**")
+        st.badge(label=str(max(st.session_state["battery_soc_values"])), icon="⬆️", color="green")
+        st.badge(label=str(min(st.session_state["battery_soc_values"])), icon="⬇️", color="red")
 
 
 def widget_household_load(cache: dict[str, tuple[Any, float]]):
@@ -144,23 +142,24 @@ def widget_solar_generators(cache: dict[str, tuple[Any, float]]):
         st.metric(
             label="Solar Generator Power",
             value=f"{solar_gen_power} kW",
-            delta=f"{round(solar_gen_power - st.session_state['initial_solar_gen_power'], 2)} kW",
             border=True,
         )
         if timestamp_solar_gen_power:
-            st.markdown(f"Last updated: `{timestamp_solar_gen_power}`")
-        st.markdown(f"Max Power: `{max(st.session_state['solar_gen_power_values'])} kW`")
-        st.markdown(f"Min Power: `{min(st.session_state['solar_gen_power_values'])} kW`")
+            st.markdown(f"Last Update: **{timestamp_solar_gen_power}**")
+        st.badge(label=str(max(st.session_state["solar_gen_power_values"])), icon="⬆️", color="green")
+        st.badge(label=str(min(st.session_state["solar_gen_power_values"])), icon="⬇️", color="red")
 
         st.subheader("Solar Genaration Power Values")
         st.line_chart(st.session_state["solar_gen_power_values"], x_label="Refresh Cycles 🔁", y_label="kW ⚡ ")
 
 
 ##################################################################################################################################
-# SCRIPT IMPLEMENTATION                                                                                                          #
+# MARK: SCRIPT IMPLEMENTATION                                                                                                    #
 ##################################################################################################################################
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.ERROR, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    logging.basicConfig(
+        filename="dashboard.log", level=logging.WARNING, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     refresh_counter: int = st_autorefresh(interval=DASHBOARD_REFRESH_INTERVAL_MS)
     st.set_page_config(page_title="RCT Dashboard", page_icon="☀️", layout="wide")
 
@@ -182,7 +181,7 @@ if __name__ == "__main__":
 
     st.set_page_config(layout="wide")
     st.markdown("<h1 style='text-align: center'>RCT Dashboard ⚡</h1>", unsafe_allow_html=True)
-    st.markdown(f"**Current Time:** `{datetime.now().strftime('%H:%M:%S')}`")
+    st.markdown(f"**Current Time: {datetime.now().strftime('%H:%M:%S')}**")
 
     col1, col2, col3 = st.columns(3)
 
