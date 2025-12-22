@@ -8,7 +8,7 @@
 ##################################################################################################################################
 
 ##################################################################################################################################
-# IMPORT MODULES / LIBRARIES                                                                                                     #
+# MARK: IMPORTS
 ##################################################################################################################################
 # Standard library modules
 import logging
@@ -32,13 +32,11 @@ from rctclient.exceptions import FrameError
 from pydantic import BaseModel
 
 
-# Local application modules
-
 # Dev dependencies
 from rich import print
 
 ##################################################################################################################################
-# GLOBAL VARIABLES                                                                                                               #
+# MARK: GLOBAL VARIABLES
 ##################################################################################################################################
 LOGGER: logging.Logger = logging.getLogger(__name__)
 DEFAULT_POLLING_INTERVAL_SECONDS: float = 10.0
@@ -48,7 +46,7 @@ DEFAULT_CONNECTION_TIMEOUT_SECONDS: float = 3.0
 
 
 ##################################################################################################################################
-# CLASS IMPLEMENTATION                                                                                                           #
+# MARK: CLASSES
 ##################################################################################################################################
 class ParsedFrame(BaseModel):
     object_id: int
@@ -120,8 +118,9 @@ class RctClient:
         except socket.timeout:
             LOGGER.debug("Socket read timeout, continuing.")
             return None
-        except OSError:
-            LOGGER.warning("Socket error occurred, terminating reader loop.")
+        except OSError as exception:
+            LOGGER.error("Socket error occurred, terminating reader loop.")
+            LOGGER.error(str(exception))
             return b""
 
     def _guard_buffer_overflow(self, buffer: bytearray, max_size: int) -> bool:
@@ -210,7 +209,7 @@ class RctClient:
         Returns:
             int: Number of bytes to discard from the buffer.
         """
-        LOGGER.warning("Unexcpected parser error, resetting parser.")
+        LOGGER.error("Unexcpected parser error, resetting parser.")
         LOGGER.error(str(exception))
         self._reset_parser()
         return 1
@@ -240,12 +239,12 @@ class RctClient:
         key: str | None = self._object_id_to_pending_key(object_id=frame.object_id)
 
         if not key:
-            LOGGER.warning("No pending request for object ID: %s, discarding response.", str(frame.object_id))
+            LOGGER.debug("No pending request for object ID: %s, discarding response.", str(frame.object_id))
             return
 
         response_queue: queue.Queue[bytes] | None = self._get_pending_queue(key=key)
         if response_queue is None:
-            LOGGER.warning("No pending request for OID: %s, discarding response.", key)
+            LOGGER.debug("No pending request for OID: %s, discarding response.", key)
             return
 
         try:
@@ -266,7 +265,7 @@ class RctClient:
             object_info: ObjectInfo = Registry.get_by_id(id=object_id)
             return self.reverse_oid_mapping.get(object_info.name)
         except Exception:
-            LOGGER.warning("Received unknown object ID: %s", str(object_id))
+            LOGGER.debug("Received unknown object ID: %s", str(object_id))
             return None
 
     def _get_pending_queue(self, key: str) -> queue.Queue[bytes] | None:
@@ -321,7 +320,7 @@ class RctClient:
                     self.read_oid(key=key, timeout=timeout, retries=retries)
                 except Exception as exception:
                     LOGGER.warning("Failed to poll OID: %s", key)
-                    LOGGER.error(str(exception))
+                    LOGGER.warning(str(exception))
                     pass
 
                 if stagger and index < len(keys) - 1:
@@ -367,7 +366,7 @@ class RctClient:
             raise KeyError(f"OID key not found: '{key}'")
 
         if not self._socket:
-            raise TypeError(f"[ERROR] Expected socket.socket, found: {type(self._socket)}")
+            raise TypeError(f"Expected socket.socket, found: {type(self._socket)}")
 
         object_info: ObjectInfo = Registry.get_by_name(self.oid_mapping[key])
 
@@ -398,7 +397,7 @@ class RctClient:
                 last_exception = exception
             finally:
                 with self._pending_lock:
-                    LOGGER.info("Removing pending for key: %s", key)
+                    LOGGER.debug("Removing pending for key: %s", key)
                     self._pending.pop(key, None)
 
         raise TimeoutError(f"[ERROR] No response for OID: {key}") from last_exception
@@ -435,42 +434,6 @@ class RctClient:
 
     def get_cache(self) -> dict[str, tuple[Any, float]]:
         return dict(self.cache)
-
-
-##################################################################################################################################
-# FUNCTION IMPLEMENTATION                                                                                                        #
-##################################################################################################################################
-def read_yaml(file_path: str | Path) -> dict[str, Any]:
-    """Read the contents of a YAML file.
-
-    Args:
-        file_path (str | Path): Path to the YAML file.
-
-    Raises:
-        RuntimeError: If the YAML file cannot be read.
-
-    Returns:
-        dict[str, Any]: Contents of the YAML file as a dictionary.
-    """
-    path: Path = Path(file_path)
-
-    if not path.is_file():
-        LOGGER.warning("The specified path does not exist or is not a file: %s", str(path))
-        return {}
-
-    if path.suffix.lower() not in [".yaml", ".yml"]:
-        LOGGER.warning("The specified path is not a valid YAML file: %s", str(path))
-        return {}
-
-    with path.open(mode="r", encoding="utf-8") as file:
-        try:
-            return yaml.safe_load(file)
-        except Exception as exception:
-            LOGGER.warning("Could not read YAML file: %s", str(path))
-            LOGGER.warning(str(exception))
-            return {}
-
-    raise RuntimeError(f"An unexpected error occurred while trying to read the YAML file: {str(path)}")
 
 
 ##################################################################################################################################
