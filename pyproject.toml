@@ -7,10 +7,12 @@ dependencies = [
     "pandas>=2.3.2",
     "pyyaml>=6.0.2",
     "rctclient>=0.0.3",
-    "streamlit>=1.49.1",
-    "streamlit-autorefresh>=1.0.1",
     "pydantic>=2.12.5",
 ]
 
 [dependency-groups]
-dev = ["rich>=14.2.0"]
+dev = [
+    "rich>=14.2.0",
+    "streamlit>=1.52.2",
+    "streamlit-autorefresh>=1.0.1",
+]
