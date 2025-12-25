@@ -1,11 +1,10 @@
-#!/usr/bin/env python3
-##################################################################################################################################
-# Copyright (c) 2025                                                                                          All Rights Reserved
+"""
 ##################################################################################################################################
 # CREATION DATE:  26.08.2025
-# FILE:           rct_client.py
-# DESCRIPTION:    Client application for communication with an RCT inverter.
+# FILE:           rct_inverter_monitor.py
+# DESCRIPTION:    Module for reading data from an RCT inverter via TCP using the rctclient library and storing it in a cache.
 ##################################################################################################################################
+"""
 
 ##################################################################################################################################
 # MARK: IMPORTS
@@ -19,7 +18,6 @@ from typing import Any
 from collections.abc import Iterable
 import threading
 import queue
-
 
 # Third-party modules
 import yaml
@@ -435,25 +433,25 @@ class RctInverterMonitor:
 
 
 ##################################################################################################################################
-# SCRIPT IMPLEMENTATION                                                                                                          #
+# MARK: SCRIPT IMPLEMENTATION
 ##################################################################################################################################
 if __name__ == "__main__":
     import datetime as dt
 
     logging.basicConfig(filename="out_3.log", level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
-    rct_client: RctInverterMonitor = RctInverterMonitor()
-    rct_client.connect()
+    rct_inverter_monitor: RctInverterMonitor = RctInverterMonitor()
+    rct_inverter_monitor.connect()
 
     keys: list[str] = ["BATTERY_SOC", "BATTERY_POWER", "SOLAR_GENERATOR_A_POWER", "SOLAR_GENERATOR_B_POWER"]
 
     try:
-        rct_client.start_polling(keys=keys)
+        rct_inverter_monitor.start_polling(keys=keys)
 
         while True:
-            cache: dict[str, tuple[Any, float]] = rct_client.get_cache()
+            cache: dict[str, tuple[Any, float]] = rct_inverter_monitor.get_cache()
             print(cache)
             if cache:
                 print(f"Last update: {dt.datetime.fromtimestamp(cache['BATTERY_SOC'][1]).strftime('%Y-%m-%d %H:%M:%S')}")
             time.sleep(DEFAULT_POLLING_INTERVAL_SECONDS)
     finally:
-        rct_client.close()
+        rct_inverter_monitor.close()
