@@ -31,10 +31,6 @@ from rctclient.utils import decode_value
 from rctclient.exceptions import FrameError
 from pydantic import BaseModel
 
-
-# Dev dependencies
-from rich import print
-
 ##################################################################################################################################
 # MARK: GLOBAL VARIABLES
 ##################################################################################################################################
