@@ -20,7 +20,7 @@ import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 
 # Local application modules
-from rct_client import RctClient
+from rct_inverter_monitor.rct_inverter_monitor import RctInverterMonitor
 
 ##################################################################################################################################
 # MARK: GLOBAL VARIABLES                                                                                                               #
@@ -164,7 +164,7 @@ if __name__ == "__main__":
     st.set_page_config(page_title="RCT Dashboard", page_icon="☀️", layout="wide")
 
     if "rct_client" not in st.session_state:
-        st.session_state["rct_client"] = RctClient()
+        st.session_state["rct_client"] = RctInverterMonitor()
         st.session_state["rct_client"].connect()
         st.session_state["oid_keys"] = [
             "BATTERY_SOC",

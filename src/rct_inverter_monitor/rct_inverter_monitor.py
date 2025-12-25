@@ -34,11 +34,13 @@ from pydantic import BaseModel
 ##################################################################################################################################
 # MARK: GLOBAL VARIABLES
 ##################################################################################################################################
-LOGGER: logging.Logger = logging.getLogger(__name__)
-DEFAULT_POLLING_INTERVAL_SECONDS: float = 10.0
-RCT_INVERTER_IP_ADDRESS: str = "192.168.178.38"
-RCT_INVERTER_PORT: int = 8899
-DEFAULT_CONNECTION_TIMEOUT_SECONDS: float = 3.0
+# fmt: off
+LOGGER:                                 logging.Logger  = logging.getLogger(__name__)
+DEFAULT_POLLING_INTERVAL_SECONDS:       float           = 10.0
+RCT_INVERTER_IP_ADDRESS:                str             = "192.168.178.38"
+RCT_INVERTER_PORT:                      int             = 8899
+DEFAULT_CONNECTION_TIMEOUT_SECONDS:     float           = 3.0
+# fmt: on
 
 
 ##################################################################################################################################
@@ -49,7 +51,7 @@ class ParsedFrame(BaseModel):
     payload: bytes
 
 
-class RctClient:
+class RctInverterMonitor:
     def __init__(
         self,
         host_ip: str = RCT_INVERTER_IP_ADDRESS,
@@ -436,11 +438,10 @@ class RctClient:
 # SCRIPT IMPLEMENTATION                                                                                                          #
 ##################################################################################################################################
 if __name__ == "__main__":
-    # import os
     import datetime as dt
 
     logging.basicConfig(filename="out_3.log", level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
-    rct_client: RctClient = RctClient()
+    rct_client: RctInverterMonitor = RctInverterMonitor()
     rct_client.connect()
 
     keys: list[str] = ["BATTERY_SOC", "BATTERY_POWER", "SOLAR_GENERATOR_A_POWER", "SOLAR_GENERATOR_B_POWER"]
@@ -449,7 +450,6 @@ if __name__ == "__main__":
         rct_client.start_polling(keys=keys)
 
         while True:
-            # os.system("cls")
             cache: dict[str, tuple[Any, float]] = rct_client.get_cache()
             print(cache)
             if cache:
