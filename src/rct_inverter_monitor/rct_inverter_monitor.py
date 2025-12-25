@@ -389,7 +389,7 @@ class RctInverterMonitor:
                 self.cache[key] = (value, time.time())
                 return value
             except queue.Empty as exception:
-                LOGGER.warning("Timeout waiting for response for OID: %s (attempt %s", key, f"{attempt + 1}/{retries}")
+                LOGGER.warning("Timeout waiting for response for OID: %s (attempt %s", key, f"{attempt + 1}/{retries})")
                 last_exception = exception
             finally:
                 with self._pending_lock:
