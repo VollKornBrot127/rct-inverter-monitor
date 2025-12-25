@@ -11,8 +11,4 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = [
-    "rich>=14.2.0",
-    "streamlit>=1.52.2",
-    "streamlit-autorefresh>=1.0.1",
-]
+dev = ["streamlit>=1.52.2", "streamlit-autorefresh>=1.0.1"]
