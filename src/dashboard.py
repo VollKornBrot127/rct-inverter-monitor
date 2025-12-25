@@ -88,15 +88,11 @@ def widget_battery_soc(cache: dict[str, tuple[Any, float]]):
 def widget_household_load(cache: dict[str, tuple[Any, float]]):
     st.header("Household Load 🏠")
     internal_household_load_power_kw: float | None = None
-    timestamp_internal_household_load_power: str | None = None
     internal_household_load_power_raw: tuple[Any, float] | None = cache.get("HOUSEHOLD_LOAD_INTERNAL", None)
 
     # Convert raw value [W] to [kW] and round to 2 decimals
     if internal_household_load_power_raw:
         internal_household_load_power_kw = round((internal_household_load_power_raw[0] / 1000), 2)
-        timestamp_internal_household_load_power = datetime.fromtimestamp(internal_household_load_power_raw[1]).strftime(
-            "%H:%M:%S"
-        )
 
     if "initial_internal_household_load_power_kw" not in st.session_state and internal_household_load_power_kw is not None:
         st.session_state["initial_internal_household_load_power_kw"] = internal_household_load_power_kw
