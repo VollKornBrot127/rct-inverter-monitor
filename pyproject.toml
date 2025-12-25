@@ -1,10 +1,8 @@
 [project]
 name = "rct-inverter-monitor"
 version = "0.0.1"
-description = ""
-authors = [
-    { name = "Philipp Thümler", email = "philipp.thuemler@outlook.de" }
-]
+description = "This project is a Python application that reads data from RCT power inverters via TCP."
+authors = [{ name = "Philipp Thümler", email = "philipp.thuemler@outlook.de" }]
 requires-python = ">=3.13"
 dependencies = [
     "openpyxl>=3.1.5",
@@ -22,7 +20,4 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [dependency-groups]
-dev = [
-    "streamlit>=1.52.2",
-    "streamlit-autorefresh>=1.0.1",
-]
+dev = ["streamlit>=1.52.2", "streamlit-autorefresh>=1.0.1"]
