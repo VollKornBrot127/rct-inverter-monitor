@@ -1,2 +1,3 @@
-def main() -> None:
-    print("Hello from rct-inverter-monitor!")
+from .rct_inverter_monitor import RctInverterMonitor
+
+__all__ = ["RctInverterMonitor"]
